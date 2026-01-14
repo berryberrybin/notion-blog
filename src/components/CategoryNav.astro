@@ -5,18 +5,19 @@ interface Props {
 }
 
 const { categories, currentCategory } = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
 
 <nav class="category-nav">
   <a
-    href="/categories"
+    href={`${base}categories/`}
     class:list={["category-link", { active: !currentCategory }]}
   >
     All
   </a>
   {categories.map((cat) => (
     <a
-      href={`/categories/${encodeURIComponent(cat.name)}`}
+      href={`${base}categories/${encodeURIComponent(cat.name)}/`}
       class:list={["category-link", { active: currentCategory === cat.name }]}
     >
       {cat.name}

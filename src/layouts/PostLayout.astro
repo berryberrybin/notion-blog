@@ -21,13 +21,14 @@ interface Props {
 }
 
 const { title, description, category, tags, publishedAt, updatedAt, headings } = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title={title} description={description}>
   <article class="post">
     <header class="post-header">
       <div class="post-meta">
-        <a href={`/categories/${encodeURIComponent(category)}`} class="category">
+        <a href={`${base}categories/${encodeURIComponent(category)}/`} class="category">
           {category}
         </a>
         {publishedAt && (
@@ -60,7 +61,7 @@ const { title, description, category, tags, publishedAt, updatedAt, headings } =
     </div>
 
     <footer class="post-footer">
-      <a href="/posts" class="back-link">
+      <a href={`${base}posts/`} class="back-link">
         &larr; Back to Posts
       </a>
     </footer>

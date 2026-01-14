@@ -9,10 +9,11 @@ interface Props {
 
 const { post } = Astro.props;
 const { title, slug, summary, category, tags, publishedAt, updatedAt } = post.data;
+const base = import.meta.env.BASE_URL;
 ---
 
 <article class="post-card">
-  <a href={`/posts/${slug}`} class="post-link">
+  <a href={`${base}posts/${slug}/`} class="post-link">
     <div class="post-meta">
       <span class="category">{category}</span>
       <time datetime={publishedAt || updatedAt}>

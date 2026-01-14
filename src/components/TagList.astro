@@ -6,12 +6,13 @@ interface Props {
 }
 
 const { tags, size = "medium", linked = true } = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
 
 <div class:list={["tag-list", size]}>
   {tags.map((tag) => (
     linked ? (
-      <a href={`/tags/${encodeURIComponent(tag)}`} class="tag">
+      <a href={`${base}tags/${encodeURIComponent(tag)}/`} class="tag">
         #{tag}
       </a>
     ) : (
