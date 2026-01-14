@@ -187,6 +187,12 @@ function postProcessMarkdown(markdown: string): string {
     "$1\n\n</details>"
   );
 
+  // 4. Convert **`code`** to <strong><code>code</code></strong>
+  processed = processed.replace(
+    /\*\*`([^`]+)`\*\*/g,
+    "<strong><code>$1</code></strong>"
+  );
+
   return processed;
 }
 

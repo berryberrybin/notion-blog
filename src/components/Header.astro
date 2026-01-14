@@ -19,14 +19,20 @@ const currentPath = Astro.url.pathname;
     </a>
 
     <nav class="nav">
-      {navItems.map((item) => (
-        <a
-          href={item.href}
-          class:list={["nav-link", { active: currentPath === item.href || (item.href !== "/" && currentPath.startsWith(item.href)) }]}
-        >
-          {item.label}
-        </a>
-      ))}
+      {navItems.map((item) => {
+        const isHome = item.href === base;
+        const isActive = isHome
+          ? currentPath === base || currentPath === base.slice(0, -1)
+          : currentPath.startsWith(item.href);
+        return (
+          <a
+            href={item.href}
+            class:list={["nav-link", { active: isActive }]}
+          >
+            {item.label}
+          </a>
+        );
+      })}
     </nav>
 
     <ThemeToggle />
