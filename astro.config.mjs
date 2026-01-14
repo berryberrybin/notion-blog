@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://berryberrybin.github.io',
-  base: '/notion-blog',
+  base: '/notion-blog/',
   integrations: [
     mdx(),
     sitemap(),
