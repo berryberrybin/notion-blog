@@ -136,3 +136,102 @@ code:not(pre code) {
   white-space: nowrap;
   border: 0;
 }
+
+/* Toggle (details/summary) Styles */
+details {
+  background: var(--hover-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+details summary {
+  cursor: pointer;
+  padding: 1rem;
+  font-weight: 600;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details summary::before {
+  content: "▶";
+  font-size: 0.75rem;
+  transition: transform 0.2s;
+  color: var(--accent-color);
+}
+
+details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+details[open] summary {
+  border-bottom: 1px solid var(--border-color);
+}
+
+details > *:not(summary) {
+  padding: 0 1rem;
+}
+
+details > p:last-child,
+details > ul:last-child,
+details > ol:last-child {
+  padding-bottom: 1rem;
+}
+
+/* Notion Color Styles */
+.notion-red, span[style*="color: red"] { color: #e03e3e; }
+.notion-orange, span[style*="color: orange"] { color: #d9730d; }
+.notion-yellow, span[style*="color: yellow"] { color: #dfab01; }
+.notion-green, span[style*="color: green"] { color: #0f7b6c; }
+.notion-blue, span[style*="color: blue"] { color: #0b6e99; }
+.notion-purple, span[style*="color: purple"] { color: #6940a5; }
+.notion-pink, span[style*="color: pink"] { color: #ad1a72; }
+.notion-brown, span[style*="color: brown"] { color: #64473a; }
+.notion-gray, span[style*="color: gray"] { color: #9b9a97; }
+
+.notion-red-bg, span[style*="background: red"] { background-color: #fbe4e4; padding: 0.1rem 0.25rem; border-radius: 3px; }
+.notion-orange-bg, span[style*="background: orange"] { background-color: #faebdd; padding: 0.1rem 0.25rem; border-radius: 3px; }
+.notion-yellow-bg, span[style*="background: yellow"] { background-color: #fbf3db; padding: 0.1rem 0.25rem; border-radius: 3px; }
+.notion-green-bg, span[style*="background: green"] { background-color: #ddedea; padding: 0.1rem 0.25rem; border-radius: 3px; }
+.notion-blue-bg, span[style*="background: blue"] { background-color: #ddebf1; padding: 0.1rem 0.25rem; border-radius: 3px; }
+.notion-purple-bg, span[style*="background: purple"] { background-color: #eae4f2; padding: 0.1rem 0.25rem; border-radius: 3px; }
+.notion-pink-bg, span[style*="background: pink"] { background-color: #f4dfeb; padding: 0.1rem 0.25rem; border-radius: 3px; }
+.notion-brown-bg, span[style*="background: brown"] { background-color: #e9e5e3; padding: 0.1rem 0.25rem; border-radius: 3px; }
+.notion-gray-bg, span[style*="background: gray"] { background-color: #ebeced; padding: 0.1rem 0.25rem; border-radius: 3px; }
+
+[data-theme="dark"] .notion-red, [data-theme="dark"] span[style*="color: red"] { color: #ff6b6b; }
+[data-theme="dark"] .notion-orange, [data-theme="dark"] span[style*="color: orange"] { color: #ffa94d; }
+[data-theme="dark"] .notion-yellow, [data-theme="dark"] span[style*="color: yellow"] { color: #ffd43b; }
+[data-theme="dark"] .notion-green, [data-theme="dark"] span[style*="color: green"] { color: #51cf66; }
+[data-theme="dark"] .notion-blue, [data-theme="dark"] span[style*="color: blue"] { color: #74c0fc; }
+[data-theme="dark"] .notion-purple, [data-theme="dark"] span[style*="color: purple"] { color: #b197fc; }
+[data-theme="dark"] .notion-pink, [data-theme="dark"] span[style*="color: pink"] { color: #f783ac; }
+[data-theme="dark"] .notion-brown, [data-theme="dark"] span[style*="color: brown"] { color: #a58a7d; }
+[data-theme="dark"] .notion-gray, [data-theme="dark"] span[style*="color: gray"] { color: #adb5bd; }
+
+[data-theme="dark"] .notion-red-bg { background-color: rgba(255, 107, 107, 0.2); }
+[data-theme="dark"] .notion-orange-bg { background-color: rgba(255, 169, 77, 0.2); }
+[data-theme="dark"] .notion-yellow-bg { background-color: rgba(255, 212, 59, 0.2); }
+[data-theme="dark"] .notion-green-bg { background-color: rgba(81, 207, 102, 0.2); }
+[data-theme="dark"] .notion-blue-bg { background-color: rgba(116, 192, 252, 0.2); }
+[data-theme="dark"] .notion-purple-bg { background-color: rgba(177, 151, 252, 0.2); }
+[data-theme="dark"] .notion-pink-bg { background-color: rgba(247, 131, 172, 0.2); }
+[data-theme="dark"] .notion-brown-bg { background-color: rgba(165, 138, 125, 0.2); }
+[data-theme="dark"] .notion-gray-bg { background-color: rgba(173, 181, 189, 0.2); }
+
+/* Underline style */
+u {
+  text-decoration: none;
+  background: linear-gradient(to bottom, transparent 60%, var(--accent-bg) 60%);
+  padding: 0 0.1rem;
+}

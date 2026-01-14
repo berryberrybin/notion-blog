@@ -70,8 +70,9 @@ const base = import.meta.env.BASE_URL;
 
 <style>
   .post {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 0 1rem;
   }
 
   .post-header {
@@ -151,18 +152,46 @@ const base = import.meta.env.BASE_URL;
     line-height: 1.8;
   }
 
+  .post-content :global(h1) {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 2.5rem 0 1.25rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--accent-color);
+    color: var(--text-color);
+  }
+
   .post-content :global(h2) {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 600;
     margin: 2rem 0 1rem 0;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
+    padding-left: 0.75rem;
+    border-left: 4px solid var(--accent-color);
+    color: var(--text-color);
   }
 
   .post-content :global(h3) {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     font-weight: 600;
     margin: 1.5rem 0 0.75rem 0;
+    color: var(--text-color);
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .post-content :global(h3)::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--accent-color);
+    font-weight: bold;
+  }
+
+  .post-content :global(h4) {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 1.25rem 0 0.5rem 0;
+    color: var(--text-muted);
   }
 
   .post-content :global(p) {
