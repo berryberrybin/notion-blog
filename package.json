@@ -1,0 +1,27 @@
+{
+  "name": "notion-blog",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Notion CMS based tech blog with Astro",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "sync": "tsx scripts/sync-notion.ts",
+    "sync:build": "npm run sync && npm run build"
+  },
+  "dependencies": {
+    "astro": "^5.1.0",
+    "@astrojs/mdx": "^4.0.0",
+    "@astrojs/rss": "^4.0.0",
+    "@astrojs/sitemap": "^3.2.0"
+  },
+  "devDependencies": {
+    "@notionhq/client": "^2.2.15",
+    "notion-to-md": "^3.1.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "dotenv": "^16.4.0",
+    "@types/node": "^22.0.0"
+  }
+}

@@ -1,0 +1,99 @@
+---
+import type { Post } from "../utils/posts";
+import { formatDate } from "../utils/posts";
+import TagList from "./TagList.astro";
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { title, slug, summary, category, tags, publishedAt, updatedAt } = post.data;
+---
+
+<article class="post-card">
+  <a href={`/posts/${slug}`} class="post-link">
+    <div class="post-meta">
+      <span class="category">{category}</span>
+      <time datetime={publishedAt || updatedAt}>
+        {formatDate(publishedAt || updatedAt)}
+      </time>
+    </div>
+
+    <h2 class="post-title">{title}</h2>
+
+    {summary && <p class="post-summary">{summary}</p>}
+  </a>
+
+  {tags.length > 0 && (
+    <div class="post-tags">
+      <TagList tags={tags} size="small" />
+    </div>
+  )}
+</article>
+
+<style>
+  .post-card {
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--card-bg);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+  }
+
+  .post-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .category {
+    background: var(--accent-bg);
+    color: var(--accent-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  time {
+    color: var(--text-muted);
+  }
+
+  .post-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
+    color: var(--text-color);
+  }
+
+  .post-summary {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .post-tags {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+  }
+</style>

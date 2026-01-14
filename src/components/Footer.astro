@@ -1,0 +1,44 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer-content">
+    <p class="copyright">
+      &copy; {currentYear} Tech Blog. All rights reserved.
+    </p>
+    <p class="powered-by">
+      Powered by <a href="https://notion.so" target="_blank" rel="noopener">Notion</a> &
+      <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: auto;
+    border-top: 1px solid var(--border-color);
+    padding: 2rem 1rem;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .copyright {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+
+  .powered-by {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .powered-by a {
+    color: var(--accent-color);
+  }
+</style>

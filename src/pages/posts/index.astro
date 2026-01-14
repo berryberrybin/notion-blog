@@ -1,0 +1,65 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getSortedPosts } from "../../utils/posts";
+
+const posts = await getSortedPosts();
+---
+
+<BaseLayout title="Posts" description="All blog posts">
+  <div class="posts-page">
+    <header class="page-header">
+      <h1>All Posts</h1>
+      <p class="post-count">{posts.length} posts</p>
+    </header>
+
+    {posts.length > 0 ? (
+      <div class="posts-grid">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <p>No posts yet. Check back soon!</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .posts-page {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .post-count {
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .posts-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+  }
+</style>

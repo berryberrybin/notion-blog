@@ -1,0 +1,51 @@
+---
+interface Props {
+  tags: string[];
+  size?: "small" | "medium";
+  linked?: boolean;
+}
+
+const { tags, size = "medium", linked = true } = Astro.props;
+---
+
+<div class:list={["tag-list", size]}>
+  {tags.map((tag) => (
+    linked ? (
+      <a href={`/tags/${encodeURIComponent(tag)}`} class="tag">
+        #{tag}
+      </a>
+    ) : (
+      <span class="tag">#{tag}</span>
+    )
+  ))}
+</div>
+
+<style>
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+
+  a.tag:hover {
+    background: var(--tag-hover-bg);
+  }
+
+  .small .tag {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .medium .tag {
+    font-size: 0.875rem;
+  }
+</style>

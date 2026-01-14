@@ -1,0 +1,75 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import CategoryNav from "../../components/CategoryNav.astro";
+import { getCategories, getPostsByCategory } from "../../utils/posts";
+
+export async function getStaticPaths() {
+  const categories = await getCategories();
+  return categories.map((cat) => ({
+    params: { category: cat.name },
+  }));
+}
+
+const { category } = Astro.params;
+const categories = await getCategories();
+const posts = await getPostsByCategory(category);
+---
+
+<BaseLayout title={`${category}`} description={`Posts in ${category} category`}>
+  <div class="category-page">
+    <header class="page-header">
+      <h1>{category}</h1>
+      <p class="post-count">{posts.length} posts</p>
+    </header>
+
+    <CategoryNav categories={categories} currentCategory={category} />
+
+    {posts.length > 0 ? (
+      <div class="posts-grid">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <p>No posts in this category yet.</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .category-page {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    margin-bottom: 2rem;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .post-count {
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .posts-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+  }
+</style>

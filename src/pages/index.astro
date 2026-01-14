@@ -1,0 +1,223 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/PostCard.astro";
+import { getPostsByDate, getCategories, getTags } from "../utils/posts";
+
+const posts = await getPostsByDate();
+const recentPosts = posts.slice(0, 6);
+const categories = await getCategories();
+const tags = await getTags();
+---
+
+<BaseLayout title="Home" description="Tech Blog - Development notes and tutorials">
+  <div class="home">
+    <section class="hero">
+      <h1>Tech Blog</h1>
+      <p class="hero-description">
+        Development notes, tutorials, and insights from my journey as a developer.
+      </p>
+    </section>
+
+    <div class="content-grid">
+      <section class="main-content">
+        <div class="section-header">
+          <h2>Recent Posts</h2>
+          <a href="/posts" class="view-all">View all &rarr;</a>
+        </div>
+
+        {recentPosts.length > 0 ? (
+          <div class="posts-grid">
+            {recentPosts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        ) : (
+          <div class="empty-state">
+            <p>No posts yet. Check back soon!</p>
+          </div>
+        )}
+      </section>
+
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3>Categories</h3>
+          <ul class="category-list">
+            {categories.map((cat) => (
+              <li>
+                <a href={`/categories/${encodeURIComponent(cat.name)}`}>
+                  {cat.name}
+                  <span class="count">{cat.count}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          {categories.length === 0 && (
+            <p class="empty-text">No categories yet.</p>
+          )}
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Tags</h3>
+          <div class="tag-cloud">
+            {tags.slice(0, 15).map((tag) => (
+              <a href={`/tags/${encodeURIComponent(tag.name)}`} class="tag">
+                #{tag.name}
+              </a>
+            ))}
+          </div>
+          {tags.length === 0 && (
+            <p class="empty-text">No tags yet.</p>
+          )}
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .home {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+  }
+
+  .hero-description {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    .content-grid {
+      grid-template-columns: 1fr 280px;
+    }
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .view-all {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .view-all:hover {
+    text-decoration: underline;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+  }
+
+  .sidebar-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+  }
+
+  .sidebar-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .category-list li {
+    margin: 0.5rem 0;
+  }
+
+  .category-list a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  .category-list a:hover {
+    background: var(--hover-bg);
+  }
+
+  .category-list .count {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+  }
+
+  .tag:hover {
+    background: var(--tag-hover-bg);
+  }
+
+  .empty-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+</style>

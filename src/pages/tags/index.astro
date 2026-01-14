@@ -1,0 +1,99 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getTags } from "../../utils/posts";
+
+const tags = await getTags();
+---
+
+<BaseLayout title="Tags" description="Browse posts by tag">
+  <div class="tags-page">
+    <header class="page-header">
+      <h1>Tags</h1>
+      <p class="tag-count">{tags.length} tags</p>
+    </header>
+
+    {tags.length > 0 ? (
+      <div class="tags-cloud">
+        {tags.map((tag) => (
+          <a href={`/tags/${encodeURIComponent(tag.name)}`} class="tag-item">
+            <span class="tag-name">#{tag.name}</span>
+            <span class="tag-count">{tag.count}</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <p>No tags yet. Check back soon!</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .tags-page {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .page-header .tag-count {
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .tag-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-bg);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .tag-item:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+  }
+
+  .tag-name {
+    color: var(--text-color);
+    font-weight: 500;
+  }
+
+  .tag-item .tag-count {
+    background: var(--accent-bg);
+    color: var(--accent-color);
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+  }
+</style>
