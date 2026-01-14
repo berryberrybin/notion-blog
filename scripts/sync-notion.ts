@@ -138,7 +138,7 @@ async function downloadImage(url: string, slug: string, index: number): Promise<
     await fs.writeFile(imagePath, Buffer.from(buffer));
 
     console.log(`    Downloaded: ${imageFileName}`);
-    return `/images/posts/${imageFileName}`;
+    return `/notion-blog/images/posts/${imageFileName}`;
   } catch (error) {
     console.error(`    Failed to download image: ${url}`, error);
     return url; // Return original URL if download fails
@@ -163,6 +163,31 @@ async function processImages(markdown: string, slug: string): Promise<string> {
   }
 
   return processedMarkdown;
+}
+
+// Post-process markdown for better rendering
+function postProcessMarkdown(markdown: string): string {
+  let processed = markdown;
+
+  // 1. Convert **text** inside <summary> tags to <strong>text</strong>
+  processed = processed.replace(
+    /<summary>\*\*([^*]+)\*\*<\/summary>/g,
+    "<summary><strong>$1</strong></summary>"
+  );
+
+  // 2. Add blank line after </summary> for proper markdown parsing
+  processed = processed.replace(
+    /<\/summary>\n([^\n])/g,
+    "</summary>\n\n$1"
+  );
+
+  // 3. Ensure </details> has proper spacing
+  processed = processed.replace(
+    /([^\n])\n<\/details>/g,
+    "$1\n\n</details>"
+  );
+
+  return processed;
 }
 
 // Create frontmatter for markdown file
@@ -219,6 +244,9 @@ async function syncNotionToMarkdown() {
 
       // Process images (download and update paths)
       markdown = await processImages(markdown, props.slug);
+
+      // Post-process markdown for better rendering
+      markdown = postProcessMarkdown(markdown);
 
       // Combine frontmatter and content
       const content = createFrontmatter(props) + markdown;
