@@ -1,0 +1,90 @@
+---
+interface Props {
+  texts: string[];
+  className?: string;
+}
+
+const { texts, className = "" } = Astro.props;
+---
+
+<span class={`typing-container ${className}`} data-texts={JSON.stringify(texts)}>
+  <span class="typing-text"></span>
+  <span class="cursor">|</span>
+</span>
+
+<style>
+  .typing-container {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .typing-text {
+    display: inline;
+  }
+
+  .cursor {
+    display: inline-block;
+    color: var(--honey);
+    font-weight: 300;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+
+<script>
+  class TypingEffect {
+    private element: HTMLElement;
+    private textElement: HTMLElement;
+    private texts: string[];
+    private currentIndex: number = 0;
+    private charIndex: number = 0;
+    private isDeleting: boolean = false;
+    private typeSpeed: number = 100;
+    private deleteSpeed: number = 50;
+    private pauseTime: number = 2000;
+
+    constructor(element: HTMLElement) {
+      this.element = element;
+      this.textElement = element.querySelector('.typing-text')!;
+      this.texts = JSON.parse(element.dataset.texts || '[]');
+
+      if (this.texts.length > 0) {
+        this.type();
+      }
+    }
+
+    private type() {
+      const currentText = this.texts[this.currentIndex];
+
+      if (this.isDeleting) {
+        this.textElement.textContent = currentText.substring(0, this.charIndex - 1);
+        this.charIndex--;
+      } else {
+        this.textElement.textContent = currentText.substring(0, this.charIndex + 1);
+        this.charIndex++;
+      }
+
+      let timeout = this.isDeleting ? this.deleteSpeed : this.typeSpeed;
+
+      if (!this.isDeleting && this.charIndex === currentText.length) {
+        timeout = this.pauseTime;
+        this.isDeleting = true;
+      } else if (this.isDeleting && this.charIndex === 0) {
+        this.isDeleting = false;
+        this.currentIndex = (this.currentIndex + 1) % this.texts.length;
+        timeout = 500;
+      }
+
+      setTimeout(() => this.type(), timeout);
+    }
+  }
+
+  document.querySelectorAll('.typing-container').forEach((el) => {
+    new TypingEffect(el as HTMLElement);
+  });
+</script>

@@ -10,26 +10,35 @@ export async function getStaticPaths() {
   }));
 }
 
+const base = import.meta.env.BASE_URL;
 const { tag } = Astro.params;
 const posts = await getPostsByTag(tag);
 ---
 
 <BaseLayout title={`#${tag}`} description={`Posts tagged with ${tag}`}>
   <div class="tag-page">
-    <header class="page-header">
+    <header class="page-header animate-slide-up">
+      <a href={`${base}tags/`} class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        All Tags
+      </a>
       <h1>#{tag}</h1>
-      <p class="post-count">{posts.length} posts</p>
-      <a href="/tags" class="back-link">&larr; All tags</a>
+      <p class="page-desc">{posts.length} {posts.length === 1 ? 'article' : 'articles'}</p>
     </header>
 
     {posts.length > 0 ? (
       <div class="posts-grid">
-        {posts.map((post) => (
-          <PostCard post={post} />
+        {posts.map((post, index) => (
+          <div class="post-item" style={`--index: ${index}`}>
+            <PostCard post={post} />
+          </div>
         ))}
       </div>
     ) : (
-      <div class="empty-state">
+      <div class="empty-state animate-fade">
         <p>No posts with this tag yet.</p>
       </div>
     )}
@@ -38,48 +47,99 @@ const posts = await getPostsByTag(tag);
 
 <style>
   .tag-page {
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
+    padding: 0 1.5rem 4rem;
   }
 
   .page-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
+    margin-bottom: 3rem;
+    padding: 1rem 0 2rem;
     border-bottom: 1px solid var(--border-color);
-  }
-
-  .page-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    color: var(--accent-color);
-  }
-
-  .post-count {
-    color: var(--text-muted);
-    margin: 0 0 1rem 0;
+    opacity: 0;
   }
 
   .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
     color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    transition: color 0.15s ease;
     text-decoration: none;
-    font-size: 0.9rem;
   }
 
   .back-link:hover {
-    color: var(--accent-color);
+    color: var(--text-color);
+  }
+
+  .back-link svg {
+    transition: transform 0.15s ease;
+  }
+
+  .back-link:hover svg {
+    transform: translateX(-3px);
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text-color);
+  }
+
+  .page-desc {
+    color: var(--text-muted);
+    margin: 0.5rem 0 0 0;
+    font-size: 1rem;
   }
 
   .posts-grid {
     display: grid;
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .post-item {
+    animation: fadeSlideUp 0.4s ease forwards;
+    animation-delay: calc(var(--index) * 0.03s);
+    opacity: 0;
+  }
+
+  @keyframes fadeSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .empty-state {
     text-align: center;
-    padding: 3rem;
+    padding: 4rem 2rem;
     color: var(--text-muted);
     border: 1px dashed var(--border-color);
-    border-radius: 8px;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 768px) {
+    .tag-page {
+      padding-bottom: 6rem;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+    }
   }
 </style>

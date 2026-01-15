@@ -1,93 +1,226 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PostCard from "../components/PostCard.astro";
+import TypingText from "../components/TypingText.astro";
 import { getPostsByDate, getCategories, getTags } from "../utils/posts";
+import { formatDate } from "../utils/posts";
 
 const base = import.meta.env.BASE_URL;
 const posts = await getPostsByDate();
 const recentPosts = posts.slice(0, 6);
 const categories = await getCategories();
 const tags = await getTags();
+
+const typingTexts = [
+  "Developer",
+  "Problem Solver",
+  "Code Enthusiast",
+  "Tech Explorer",
+];
 ---
 
-<BaseLayout title="Home" description="Tech Blog - Development notes and tutorials">
+<BaseLayout title="Home" description="soobee's tech blog - Development notes, tutorials, and insights">
   <div class="home">
+    <!-- Compact Hero Section with 3D Bee Character -->
     <section class="hero">
-      <div class="hero-badge">Welcome to my blog</div>
-      <h1>
-        <span class="hero-highlight">Tech</span> Blog
-      </h1>
-      <p class="hero-description">
-        Development notes, tutorials, and insights from my journey as a developer.
-      </p>
-      <div class="hero-stats">
-        <div class="stat">
-          <span class="stat-number">{posts.length}</span>
-          <span class="stat-label">Posts</span>
+      <!-- Background -->
+      <div class="hero-bg">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+      </div>
+
+      <div class="hero-container">
+        <!-- Left: Text Content -->
+        <div class="hero-content animate-slide-up">
+          <h1 class="hero-title animate-slide-up">
+            Hi, I'm <span class="highlight">soobee</span>
+          </h1>
+
+          <div class="hero-subtitle animate-slide-up delay-1">
+            <span class="subtitle-static">I'm a </span>
+            <TypingText texts={typingTexts} className="subtitle-typing" />
+          </div>
+
+          <p class="hero-description animate-slide-up delay-2">
+            Buzzing through code, crafting digital honey.
+          </p>
+
+          <div class="hero-cta animate-slide-up delay-3">
+            <a href={`${base}posts/`} class="btn-hero btn-primary-hero">
+              <span class="btn-text">Read Posts</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+              <span class="btn-shadow"></span>
+            </a>
+            <a href={`${base}categories/`} class="btn-hero btn-secondary-hero">
+              <span class="btn-text">Categories</span>
+              <span class="btn-shadow"></span>
+            </a>
+          </div>
+
+          <div class="hero-stats animate-slide-up delay-4">
+            <div class="stat">
+              <span class="stat-number">{posts.length}</span>
+              <span class="stat-label">Posts</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+              <span class="stat-number">{categories.length}</span>
+              <span class="stat-label">Categories</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+              <span class="stat-number">{tags.length}</span>
+              <span class="stat-label">Tags</span>
+            </div>
+          </div>
         </div>
-        <div class="stat">
-          <span class="stat-number">{categories.length}</span>
-          <span class="stat-label">Categories</span>
-        </div>
-        <div class="stat">
-          <span class="stat-number">{tags.length}</span>
-          <span class="stat-label">Tags</span>
+
+        <!-- Right: 3D Bee Developer Character with Floating Icons -->
+        <div class="hero-character animate-scale delay-1">
+          <div class="character-container">
+            <!-- Floating 3D Icons around the bee -->
+            <img
+              src={`${base}images/icons/icon_code.png`}
+              alt="Code"
+              class="float-icon icon-code"
+            />
+            <img
+              src={`${base}images/icons/icon_cup.png`}
+              alt="Coffee"
+              class="float-icon icon-cup"
+            />
+            <img
+              src={`${base}images/icons/icon_book.png`}
+              alt="Books"
+              class="float-icon icon-book"
+            />
+            <img
+              src={`${base}images/icons/icon_computer.png`}
+              alt="Computer"
+              class="float-icon icon-computer"
+            />
+            <img
+              src={`${base}images/icons/icon_dashboard.png`}
+              alt="Dashboard"
+              class="float-icon icon-dashboard"
+            />
+            <img
+              src={`${base}images/icons/icon_file.png`}
+              alt="Files"
+              class="float-icon icon-file"
+            />
+
+            <!-- Main Bee Developer Character -->
+            <img
+              src={`${base}images/icons/icon_bee_dev.png`}
+              alt="Developer Bee"
+              class="bee-character"
+            />
+
+            <!-- Soft glow behind bee -->
+            <div class="bee-glow"></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <div class="content-grid">
-      <section class="main-content">
-        <div class="section-header">
-          <h2>Recent Posts</h2>
-          <a href={`${base}posts/`} class="view-all">View all &rarr;</a>
+    <!-- Recent Posts -->
+    <section class="posts-section">
+      <div class="section-header animate-slide-up">
+        <h2>Recent Posts</h2>
+        <a href={`${base}posts/`} class="view-all">
+          View all
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+
+      {recentPosts.length > 0 ? (
+        <div class="posts-grid">
+          {recentPosts.map((post, index) => (
+            <article class="post-card" style={`--index: ${index}`}>
+              <a href={`${base}posts/${post.data.slug}/`} class="card-link">
+                <div class="card-shadow"></div>
+                <div class="card-inner">
+                  <div class="card-header">
+                    <span class="card-category">{post.data.category}</span>
+                    <span class="card-date">{formatDate(post.data.publishedAt || post.data.updatedAt)}</span>
+                  </div>
+                  <h3 class="card-title">{post.data.title}</h3>
+                  {post.data.summary && (
+                    <p class="card-summary">{post.data.summary}</p>
+                  )}
+                  <div class="card-footer">
+                    <span class="read-more">
+                      Read article
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          ))}
         </div>
+      ) : (
+        <div class="empty-state animate-fade">
+          <p>No posts yet. Check back soon!</p>
+        </div>
+      )}
+    </section>
 
-        {recentPosts.length > 0 ? (
-          <div class="posts-grid">
-            {recentPosts.map((post) => (
-              <PostCard post={post} />
-            ))}
+    <!-- Categories & Tags Grid -->
+    <div class="grid-section animate-slide-up">
+      <div class="grid-card">
+        <div class="grid-shadow"></div>
+        <div class="grid-inner">
+          <div class="grid-header">
+            <h3>Categories</h3>
+            <a href={`${base}categories/`} class="grid-link">View all</a>
           </div>
-        ) : (
-          <div class="empty-state">
-            <p>No posts yet. Check back soon!</p>
-          </div>
-        )}
-      </section>
-
-      <aside class="sidebar">
-        <div class="sidebar-section">
-          <h3>Categories</h3>
-          <ul class="category-list">
-            {categories.map((cat) => (
-              <li>
-                <a href={`${base}categories/${encodeURIComponent(cat.name)}/`}>
-                  {cat.name}
-                  <span class="count">{cat.count}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-          {categories.length === 0 && (
+          {categories.length > 0 ? (
+            <ul class="category-list">
+              {categories.slice(0, 5).map((cat) => (
+                <li>
+                  <a href={`${base}categories/${encodeURIComponent(cat.name)}/`}>
+                    <span class="cat-name">{cat.name}</span>
+                    <span class="cat-count">{cat.count}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
             <p class="empty-text">No categories yet.</p>
           )}
         </div>
+      </div>
 
-        <div class="sidebar-section">
-          <h3>Tags</h3>
-          <div class="tag-cloud">
-            {tags.slice(0, 15).map((tag) => (
-              <a href={`${base}tags/${encodeURIComponent(tag.name)}/`} class="tag">
-                #{tag.name}
-              </a>
-            ))}
+      <div class="grid-card">
+        <div class="grid-shadow"></div>
+        <div class="grid-inner">
+          <div class="grid-header">
+            <h3>Tags</h3>
+            <a href={`${base}tags/`} class="grid-link">View all</a>
           </div>
-          {tags.length === 0 && (
+          {tags.length > 0 ? (
+            <div class="tag-cloud">
+              {tags.slice(0, 12).map((tag) => (
+                <a href={`${base}tags/${encodeURIComponent(tag.name)}/`} class="tag">
+                  #{tag.name}
+                </a>
+              ))}
+            </div>
+          ) : (
             <p class="empty-text">No tags yet.</p>
           )}
         </div>
-      </aside>
+      </div>
     </div>
   </div>
 </BaseLayout>
@@ -96,106 +229,342 @@ const tags = await getTags();
   .home {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 1.5rem 4rem;
   }
+
+  /* ============================================
+     COMPACT HERO WITH 3D CHARACTER
+     ============================================ */
 
   .hero {
+    position: relative;
+    padding: 2rem 0 3rem;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .gradient-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+  }
+
+  .orb-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--honey-glow);
+    top: -100px;
+    left: -100px;
+  }
+
+  .orb-2 {
+    width: 300px;
+    height: 300px;
+    background: var(--honey-glow);
+    bottom: -50px;
+    right: -50px;
+  }
+
+  .hero-container {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* Left Content - Center aligned */
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    padding: 4rem 2rem;
-    margin-bottom: 3rem;
-    background: linear-gradient(135deg, var(--accent-bg) 0%, var(--bg-color) 100%);
-    border-radius: 16px;
-    border: 1px solid var(--border-color);
+    gap: 0.75rem;
   }
 
-  .hero-badge {
-    display: inline-block;
-    background: var(--accent-color);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.35rem 1rem;
-    border-radius: 50px;
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .hero h1 {
-    font-size: 3rem;
+  .hero-title {
+    font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 800;
-    margin: 0 0 1rem 0;
-    line-height: 1.2;
+    margin: 0;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--text-color);
   }
 
-  .hero-highlight {
-    background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
+  .highlight {
+    background: var(--gradient-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
+  .hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 400;
+    color: var(--text-muted);
+    min-height: 1.75rem;
+  }
+
+  .hero-subtitle :global(.typing-container) {
+    color: var(--honey);
+    font-weight: 600;
+  }
+
   .hero-description {
     color: var(--text-muted);
-    font-size: 1.15rem;
-    max-width: 600px;
-    margin: 0 auto 2rem auto;
-    line-height: 1.7;
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .hero-cta {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-hero {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.19s ease-out;
+    cursor: pointer;
+  }
+
+  .btn-hero .btn-shadow {
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    transform: translate(3px, 3px);
+    z-index: -1;
+    transition: transform 0.19s ease-out;
+  }
+
+  .btn-hero:hover {
+    transform: translate(-2px, -2px);
+  }
+
+  .btn-hero:hover .btn-shadow {
+    transform: translate(5px, 5px);
+  }
+
+  .btn-primary-hero {
+    background: var(--honey);
+    color: #1C1917;
+  }
+
+  .btn-primary-hero .btn-shadow {
+    background: var(--honey-dark);
+  }
+
+  .btn-secondary-hero {
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+  }
+
+  .btn-secondary-hero .btn-shadow {
+    background: var(--border-color);
   }
 
   .hero-stats {
-    display: flex;
-    justify-content: center;
-    gap: 3rem;
-    margin-top: 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    margin-top: 0.5rem;
+    width: fit-content;
   }
 
   .stat {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 0.125rem;
   }
 
   .stat-number {
-    font-size: 2rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: var(--accent-color);
+    color: var(--honey);
+    line-height: 1;
   }
 
   .stat-label {
-    font-size: 0.85rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
-  @media (max-width: 640px) {
-    .hero {
-      padding: 2.5rem 1.5rem;
-    }
-
-    .hero h1 {
-      font-size: 2rem;
-    }
-
-    .hero-stats {
-      gap: 1.5rem;
-    }
-
-    .stat-number {
-      font-size: 1.5rem;
-    }
+  .stat-divider {
+    width: 1px;
+    height: 28px;
+    background: var(--border-color);
   }
 
-  .content-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3rem;
+  /* 3D Character */
+  .hero-character {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
   }
 
-  @media (min-width: 1024px) {
-    .content-grid {
-      grid-template-columns: 1fr 280px;
-    }
+  .character-container {
+    position: relative;
+    width: 340px;
+    height: 340px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Main Bee Character */
+  .bee-character {
+    width: 200px;
+    height: auto;
+    position: relative;
+    z-index: 5;
+    animation: beeFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+  }
+
+  @keyframes beeFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(2deg); }
+  }
+
+  /* Soft glow behind bee */
+  .bee-glow {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, var(--honey-glow) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 1;
+    opacity: 0.5;
+    animation: glowPulse 4s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+  }
+
+  /* Floating 3D Icons */
+  .float-icon {
+    position: absolute;
+    z-index: 10;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));
+    transition: transform 0.3s ease;
+  }
+
+  .float-icon:hover {
+    transform: scale(1.1) !important;
+  }
+
+  /* Icon positions and animations - arranged around the bee */
+  .icon-code {
+    width: 90px;
+    top: -5%;
+    right: 5%;
+    animation: floatCode 4s ease-in-out infinite;
+  }
+
+  .icon-cup {
+    width: 55px;
+    bottom: 25%;
+    left: -5%;
+    animation: floatCup 4.5s ease-in-out infinite;
+  }
+
+  .icon-book {
+    width: 75px;
+    bottom: 0%;
+    left: 15%;
+    animation: floatBook 5s ease-in-out infinite;
+  }
+
+  .icon-computer {
+    width: 80px;
+    top: 15%;
+    left: -10%;
+    animation: floatComputer 4.2s ease-in-out infinite;
+  }
+
+  .icon-dashboard {
+    width: 70px;
+    top: 5%;
+    right: -10%;
+    animation: floatDashboard 4.8s ease-in-out infinite;
+  }
+
+  .icon-file {
+    width: 75px;
+    bottom: 5%;
+    right: 0%;
+    animation: floatFile 5.2s ease-in-out infinite;
+  }
+
+  /* Different floating animations for each icon */
+  @keyframes floatCode {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(5deg); }
+  }
+
+  @keyframes floatCup {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(-3deg); }
+  }
+
+  @keyframes floatBook {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(3deg); }
+  }
+
+  @keyframes floatComputer {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-14px) rotate(-4deg); }
+  }
+
+  @keyframes floatDashboard {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-11px) rotate(4deg); }
+  }
+
+  @keyframes floatFile {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-13px) rotate(-5deg); }
+  }
+
+  /* ============================================
+     POSTS SECTION
+     ============================================ */
+
+  .posts-section {
+    margin-bottom: 3rem;
   }
 
   .section-header {
@@ -203,63 +572,255 @@ const tags = await getTags();
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
+    opacity: 0;
   }
 
   .section-header h2 {
-    font-size: 1.5rem;
+    font-size: 1.125rem;
     font-weight: 600;
     margin: 0;
+    color: var(--text-color);
   }
 
   .view-all {
-    color: var(--accent-color);
-    text-decoration: none;
-    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: color 0.19s ease-out;
   }
 
   .view-all:hover {
-    text-decoration: underline;
+    color: var(--honey);
   }
 
+  .view-all svg {
+    transition: transform 0.19s ease-out;
+  }
+
+  .view-all:hover svg {
+    transform: translateX(3px);
+  }
+
+  /* Posts Grid */
   .posts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
   }
 
-  .empty-state {
-    text-align: center;
-    padding: 3rem;
-    color: var(--text-muted);
-    border: 1px dashed var(--border-color);
-    border-radius: 8px;
+  /* Post Card */
+  .post-card {
+    position: relative;
+    opacity: 0;
+    animation: cardReveal 0.5s ease forwards;
+    animation-delay: calc(var(--index) * 0.08s);
   }
 
-  .sidebar-section {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
+  @keyframes cardReveal {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .post-card .card-link {
+    display: block;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .post-card .card-shadow {
+    position: absolute;
+    inset: 0;
+    background: var(--honey);
+    border-radius: 12px;
+    transform: translate(4px, 4px);
+    transition: transform 0.19s ease-out;
+    opacity: 0.12;
+  }
+
+  .post-card .card-inner {
+    position: relative;
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
+    padding: 1.25rem;
+    transition: all 0.19s ease-out;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
   }
 
-  .sidebar-section h3 {
+  .post-card:hover .card-shadow {
+    transform: translate(6px, 6px);
+    opacity: 0.2;
+  }
+
+  .post-card:hover .card-inner {
+    transform: translate(-2px, -2px);
+    border-color: var(--honey);
+  }
+
+  .post-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.625rem;
+    font-size: 0.7rem;
+  }
+
+  .post-card .card-category {
+    color: var(--honey);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .post-card .card-date {
+    color: var(--text-light);
+  }
+
+  .post-card .card-title {
     font-size: 1rem;
     font-weight: 600;
-    margin: 0 0 1rem 0;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    margin: 0 0 0.375rem 0;
+    line-height: 1.4;
+    color: var(--text-color);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.19s ease-out;
   }
 
+  .post-card:hover .card-title {
+    color: var(--honey);
+  }
+
+  .post-card .card-summary {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+  }
+
+  .post-card .card-footer {
+    margin-top: auto;
+    padding-top: 0.875rem;
+  }
+
+  .post-card .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: color 0.19s ease-out;
+  }
+
+  .post-card .read-more svg {
+    transition: transform 0.19s ease-out;
+  }
+
+  .post-card:hover .read-more {
+    color: var(--honey);
+  }
+
+  .post-card:hover .read-more svg {
+    transform: translateX(3px);
+  }
+
+  /* ============================================
+     GRID SECTION
+     ============================================ */
+
+  .grid-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    opacity: 0;
+  }
+
+  .grid-card {
+    position: relative;
+  }
+
+  .grid-card .grid-shadow {
+    position: absolute;
+    inset: 0;
+    background: var(--honey);
+    border-radius: 12px;
+    transform: translate(4px, 4px);
+    transition: transform 0.19s ease-out;
+    opacity: 0.08;
+  }
+
+  .grid-card .grid-inner {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: all 0.19s ease-out;
+  }
+
+  .grid-card:hover .grid-shadow {
+    transform: translate(5px, 5px);
+    opacity: 0.15;
+  }
+
+  .grid-card:hover .grid-inner {
+    transform: translate(-1px, -1px);
+    border-color: var(--honey);
+  }
+
+  .grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.875rem;
+    padding-bottom: 0.625rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .grid-header h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-color);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .grid-link {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    transition: color 0.19s ease-out;
+  }
+
+  .grid-link:hover {
+    color: var(--honey);
+  }
+
+  /* Categories */
   .category-list {
     list-style: none;
     padding: 0;
     margin: 0;
-  }
-
-  .category-list li {
-    margin: 0.5rem 0;
   }
 
   .category-list a {
@@ -267,43 +828,171 @@ const tags = await getTags();
     justify-content: space-between;
     align-items: center;
     color: var(--text-color);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border-light);
+    transition: all 0.19s ease-out;
     text-decoration: none;
-    padding: 0.5rem;
-    border-radius: 4px;
-    transition: background 0.2s;
+  }
+
+  .category-list li:last-child a {
+    border-bottom: none;
   }
 
   .category-list a:hover {
-    background: var(--hover-bg);
+    color: var(--honey);
+    padding-left: 0.375rem;
   }
 
-  .category-list .count {
-    color: var(--text-muted);
+  .cat-name {
     font-size: 0.85rem;
+    font-weight: 500;
   }
 
+  .cat-count {
+    font-size: 0.7rem;
+    color: var(--text-light);
+    background: var(--bg-secondary);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+
+  /* Tags */
   .tag-cloud {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.4rem;
   }
 
   .tag {
-    background: var(--tag-bg);
-    color: var(--tag-color);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 0.3rem 0.6rem;
+    background: var(--bg-secondary);
+    border-radius: 5px;
+    transition: all 0.19s ease-out;
     text-decoration: none;
-    font-size: 0.85rem;
-    transition: background 0.2s;
   }
 
   .tag:hover {
-    background: var(--tag-hover-bg);
+    background: var(--honey-glow);
+    color: var(--honey);
+    transform: translateY(-1px);
   }
 
-  .empty-text {
+  .empty-state, .empty-text {
+    text-align: center;
+    padding: 1.5rem;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  /* ============================================
+     RESPONSIVE
+     ============================================ */
+
+  @media (max-width: 900px) {
+    .hero-container {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-character {
+      order: -1;
+    }
+
+    .character-container {
+      width: 300px;
+      height: 300px;
+    }
+
+    .bee-character {
+      width: 170px;
+    }
+
+    .bee-glow {
+      width: 150px;
+      height: 150px;
+    }
+
+    /* Scale down floating icons on tablet */
+    .icon-code { width: 75px; }
+    .icon-cup { width: 50px; }
+    .icon-book { width: 65px; }
+    .icon-computer { width: 70px; }
+    .icon-dashboard { width: 60px; }
+    .icon-file { width: 65px; }
+  }
+
+  @media (max-width: 640px) {
+    .home {
+      padding-bottom: 5rem;
+    }
+
+    .hero {
+      padding: 1.5rem 0 2rem;
+    }
+
+    .hero-title {
+      font-size: 1.75rem;
+    }
+
+    .character-container {
+      width: 240px;
+      height: 240px;
+    }
+
+    .bee-character {
+      width: 130px;
+    }
+
+    .bee-glow {
+      width: 110px;
+      height: 110px;
+    }
+
+    /* Further scale down floating icons on mobile */
+    .icon-code { width: 55px; top: 0%; right: 0%; }
+    .icon-cup { width: 35px; bottom: 30%; left: 0%; }
+    .icon-book { width: 50px; bottom: 5%; left: 10%; }
+    .icon-computer { width: 50px; top: 20%; left: -5%; }
+    .icon-dashboard { width: 45px; top: 10%; right: -5%; }
+    .icon-file { width: 50px; bottom: 10%; right: -5%; }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .grid-section {
+      grid-template-columns: 1fr;
+    }
+
+    .gradient-orb {
+      opacity: 0.15;
+    }
+  }
+
+  /* Simple mode */
+  :global([data-theme="simple"]) .gradient-orb,
+  :global([data-theme="simple-dark"]) .gradient-orb {
+    opacity: 0.1;
+  }
+
+  :global([data-theme="simple"]) .float-icon,
+  :global([data-theme="simple-dark"]) .float-icon {
+    animation: none;
+  }
+
+  :global([data-theme="simple"]) .bee-glow,
+  :global([data-theme="simple-dark"]) .bee-glow {
+    animation: none;
+    opacity: 0.3;
+  }
+
+  :global([data-theme="simple"]) .post-card .card-shadow,
+  :global([data-theme="simple-dark"]) .post-card .card-shadow,
+  :global([data-theme="simple"]) .grid-card .grid-shadow,
+  :global([data-theme="simple-dark"]) .grid-card .grid-shadow,
+  :global([data-theme="simple"]) .btn-hero .btn-shadow,
+  :global([data-theme="simple-dark"]) .btn-hero .btn-shadow {
+    display: none;
   }
 </style>

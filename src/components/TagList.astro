@@ -13,10 +13,14 @@ const base = import.meta.env.BASE_URL;
   {tags.map((tag) => (
     linked ? (
       <a href={`${base}tags/${encodeURIComponent(tag)}/`} class="tag">
-        #{tag}
+        <span class="tag-hash">#</span>
+        <span class="tag-name">{tag}</span>
       </a>
     ) : (
-      <span class="tag">#{tag}</span>
+      <span class="tag">
+        <span class="tag-hash">#</span>
+        <span class="tag-name">{tag}</span>
+      </span>
     )
   ))}
 </div>
@@ -29,24 +33,40 @@ const base = import.meta.env.BASE_URL;
   }
 
   .tag {
+    display: inline-flex;
+    align-items: center;
     background: var(--tag-bg);
     color: var(--tag-color);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
     text-decoration: none;
-    transition: background 0.2s;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+  }
+
+  .tag-hash {
+    opacity: 0.7;
+    margin-right: 0.125rem;
   }
 
   a.tag:hover {
     background: var(--tag-hover-bg);
+    border-color: var(--honey);
+    transform: translateY(-1px);
+  }
+
+  a.tag:active {
+    transform: translateY(0) scale(0.98);
   }
 
   .small .tag {
     font-size: 0.75rem;
-    padding: 0.15rem 0.4rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
   }
 
   .medium .tag {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
   }
 </style>

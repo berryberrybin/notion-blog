@@ -4,27 +4,48 @@ import { getTags } from "../../utils/posts";
 
 const base = import.meta.env.BASE_URL;
 const tags = await getTags();
+
+const titleLetters = "Tags".split("");
 ---
 
 <BaseLayout title="Tags" description="Browse posts by tag">
   <div class="tags-page">
-    <header class="page-header">
-      <h1>Tags</h1>
-      <p class="tag-count">{tags.length} tags</p>
+    <header class="page-header animate-slide-up">
+      <div class="header-content">
+        <div class="header-icon">
+          <img
+            src={`${base}images/icons/icon_tags.png`}
+            alt="Tags"
+            class="header-icon-img"
+          />
+        </div>
+        <div class="header-text">
+          <h1 class="animated-title">
+            {titleLetters.map((letter, i) => (
+              <span class="title-word" style={`--i: ${i}`}>{letter}</span>
+            ))}
+          </h1>
+          <p class="page-desc">{tags.length} tags</p>
+        </div>
+      </div>
     </header>
 
     {tags.length > 0 ? (
-      <div class="tags-cloud">
-        {tags.map((tag) => (
-          <a href={`${base}tags/${encodeURIComponent(tag.name)}/`} class="tag-item">
+      <div class="tags-grid animate-fade delay-1">
+        {tags.map((tag, index) => (
+          <a
+            href={`${base}tags/${encodeURIComponent(tag.name)}/`}
+            class="tag-item"
+            style={`--index: ${index}`}
+          >
             <span class="tag-name">#{tag.name}</span>
             <span class="tag-count">{tag.count}</span>
           </a>
         ))}
       </div>
     ) : (
-      <div class="empty-state">
-        <p>No tags yet. Check back soon!</p>
+      <div class="empty-state animate-fade">
+        <p>No tags yet.</p>
       </div>
     )}
   </div>
@@ -34,67 +55,174 @@ const tags = await getTags();
   .tags-page {
     max-width: 900px;
     margin: 0 auto;
+    padding: 0 1.5rem 4rem;
   }
 
   .page-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
     border-bottom: 1px solid var(--border-color);
+    opacity: 0;
   }
 
-  .page-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
   }
 
-  .page-header .tag-count {
-    color: var(--text-muted);
+  .header-icon {
+    flex-shrink: 0;
+  }
+
+  .header-icon-img {
+    width: 85px;
+    height: auto;
+    animation: iconFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.15));
+  }
+
+  @keyframes iconFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(5deg); }
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .animated-title {
+    font-size: 2.75rem;
+    font-weight: 800;
     margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    display: flex;
+    gap: 0.02em;
   }
 
-  .tags-cloud {
+  .title-word {
+    display: inline-block;
+    animation: letterBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 0;
+    transform: translateY(30px) scale(0.8);
+    /* 3D Pastel Style */
+    color: #7CB9E8;
+    text-shadow:
+      0 1px 0 #6AA9D8,
+      0 2px 0 #5A99C8,
+      0 3px 0 #4A89B8,
+      0 4px 8px rgba(0, 0, 0, 0.15);
+    -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.3);
+  }
+
+  /* Tags: 4 letters - Blue, Yellow, Green, Pink */
+  .title-word:nth-child(1) { color: #7CB9E8; text-shadow: 0 1px 0 #6AA9D8, 0 2px 0 #5A99C8, 0 3px 0 #4A89B8, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.1s; }
+  .title-word:nth-child(2) { color: #FFD93D; text-shadow: 0 1px 0 #EFC92D, 0 2px 0 #DFB91D, 0 3px 0 #CFA90D, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.16s; }
+  .title-word:nth-child(3) { color: #A8D8B9; text-shadow: 0 1px 0 #98C8A9, 0 2px 0 #88B899, 0 3px 0 #78A889, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.22s; }
+  .title-word:nth-child(4) { color: #E8A0BF; text-shadow: 0 1px 0 #D890AF, 0 2px 0 #C8809F, 0 3px 0 #B8708F, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.28s; }
+
+  @keyframes letterBounce {
+    0% {
+      opacity: 0;
+      transform: translateY(30px) scale(0.8);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(-8px) scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .page-desc {
+    color: var(--text-muted);
+    margin: 0.5rem 0 0 0;
+    font-size: 1rem;
+  }
+
+  .tags-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.75rem;
+    opacity: 0;
   }
 
   .tag-item {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1rem;
+    padding: 0.625rem 1rem;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     background: var(--card-bg);
     text-decoration: none;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
+    animation: tagFadeIn 0.3s ease forwards;
+    animation-delay: calc(var(--index) * 0.02s);
+    opacity: 0;
+  }
+
+  @keyframes tagFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .tag-item:hover {
-    border-color: var(--accent-color);
+    border-color: var(--text-muted);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color);
   }
 
   .tag-name {
     color: var(--text-color);
     font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.15s ease;
   }
 
-  .tag-item .tag-count {
-    background: var(--accent-bg);
-    color: var(--accent-color);
-    padding: 0.15rem 0.5rem;
-    border-radius: 12px;
-    font-size: 0.8rem;
+  .tag-item:hover .tag-name {
+    color: var(--honey);
+  }
+
+  .tag-count {
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
     font-weight: 500;
   }
 
   .empty-state {
     text-align: center;
-    padding: 3rem;
+    padding: 4rem 2rem;
     color: var(--text-muted);
-    border: 1px dashed var(--border-color);
-    border-radius: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .tags-page {
+      padding-bottom: 6rem;
+    }
+
+    .animated-title {
+      font-size: 2.25rem;
+    }
+
+    .header-icon-img {
+      width: 65px;
+    }
+
+    .header-content {
+      gap: 1rem;
+    }
   }
 </style>

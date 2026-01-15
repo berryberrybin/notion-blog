@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "Bash(cat:*)",
+      "Bash(npm run build:*)",
+      "WebFetch(domain:vercel.com)",
+      "WebFetch(domain:blirvarldenbattre.se)"
     ]
   }
 }

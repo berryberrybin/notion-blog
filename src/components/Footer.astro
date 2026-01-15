@@ -4,13 +4,43 @@ const currentYear = new Date().getFullYear();
 
 <footer class="footer">
   <div class="footer-content">
-    <p class="copyright">
-      &copy; {currentYear} Tech Blog. All rights reserved.
-    </p>
-    <p class="powered-by">
-      Powered by <a href="https://notion.so" target="_blank" rel="noopener">Notion</a> &
-      <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>
-    </p>
+    <div class="footer-brand">
+      <span class="footer-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="12" cy="13" rx="6" ry="7" fill="currentColor"/>
+          <path d="M6.5 11h11M6.5 14h11" stroke="var(--bg-color)" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="7" cy="9" rx="3" ry="4" fill="currentColor" opacity="0.3"/>
+          <ellipse cx="17" cy="9" rx="3" ry="4" fill="currentColor" opacity="0.3"/>
+          <circle cx="12" cy="5" r="3" fill="currentColor"/>
+          <path d="M10 3L8 1M14 3L16 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="11" cy="5" r="0.8" fill="var(--bg-color)"/>
+          <circle cx="13" cy="5" r="0.8" fill="var(--bg-color)"/>
+        </svg>
+      </span>
+      <span class="footer-name">soobee</span>
+    </div>
+
+    <div class="footer-info">
+      <p class="copyright">
+        &copy; {currentYear} soobee. All rights reserved.
+      </p>
+      <p class="powered-by">
+        Built with
+        <a href="https://notion.so" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.98-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952l1.448.327s0 .84-1.168.84l-3.22.186c-.094-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.14c-.093-.514.28-.887.747-.933zM2.1 1.155l13.215-.933c1.635-.14 2.055-.047 3.082.7l4.25 2.986c.7.513.933.653.933 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.668c0-.84.374-1.54 1.541-1.513z"/>
+          </svg>
+          Notion
+        </a>
+        &
+        <a href="https://astro.build" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8.358 20.162c-1.186-1.07-1.532-3.316-1.038-4.944.856 1.026 2.043 1.352 3.272 1.535 1.897.283 3.76.177 5.522-.678a5.7 5.7 0 0 0 1.341-.907c-.07 1.78-.913 3.153-2.33 4.222-1.07.807-2.285 1.154-3.57 1.205a7 7 0 0 1-3.197-.433m9.107-4.769c-.23 1.235-.773 2.315-1.738 3.145-1.04.894-2.28 1.295-3.602 1.416-.942.086-1.891.09-2.829-.026-1.256-.155-2.417-.524-3.422-1.285a5.7 5.7 0 0 1-.958-.942c-.03-.036-.053-.076-.11-.162l.144-.043c.91-.25 1.82-.502 2.73-.752 1.102-.303 2.204-.608 3.306-.91.448-.124.9-.236 1.342-.381.593-.195 1.17-.424 1.705-.739.407-.24.77-.528 1.047-.911.226-.312.393-.653.455-1.032.038-.232.052-.47.02-.703a.925.925 0 0 0-.115-.333c.17.196.333.397.468.618.307.503.474 1.05.477 1.644.002.312-.027.622-.095.926-.16.72-.497 1.344-.97 1.894-.304.353-.65.663-1.03.934-.544.387-1.145.67-1.78.88a10 10 0 0 1-1.15.315l-.11.024m-4.047-9.41c-.076.082-.166.151-.265.203-.278.145-.542.314-.79.505-.56.43-1.01.958-1.36 1.57-.498.87-.77 1.81-.86 2.81-.06.67-.04 1.34.08 2a6.1 6.1 0 0 0 1.13 2.51c.21.29.45.56.71.81l.07.06c-.45.12-.9.24-1.35.37-.84.23-1.68.47-2.52.7l-.35.1c-.06-.08-.13-.15-.18-.24a8.4 8.4 0 0 1-.92-2.12 9.7 9.7 0 0 1-.28-2.01c-.03-.87.05-1.73.26-2.57.31-1.25.86-2.39 1.64-3.4.97-1.24 2.18-2.16 3.6-2.78.5-.22 1.02-.39 1.56-.51.14-.03.28-.05.42-.07l.08.03z"/>
+          </svg>
+          Astro
+        </a>
+      </p>
+    </div>
   </div>
 </footer>
 
@@ -18,27 +48,85 @@ const currentYear = new Date().getFullYear();
   .footer {
     margin-top: auto;
     border-top: 1px solid var(--border-color);
-    padding: 2rem 1rem;
+    padding: 2.5rem 1.5rem;
+    background: var(--bg-secondary);
   }
 
   .footer-content {
     max-width: 1200px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--honey);
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .footer-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .footer-info {
     text-align: center;
   }
 
   .copyright {
     color: var(--text-muted);
     font-size: 0.875rem;
+    margin: 0;
   }
 
   .powered-by {
-    color: var(--text-muted);
-    font-size: 0.75rem;
+    color: var(--text-light);
+    font-size: 0.8rem;
     margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    flex-wrap: wrap;
   }
 
   .powered-by a {
-    color: var(--accent-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--text-muted);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: all var(--transition-fast);
+  }
+
+  .powered-by a:hover {
+    color: var(--honey);
+    background: var(--hover-bg);
+  }
+
+  @media (max-width: 768px) {
+    .footer {
+      padding-bottom: 5rem;
+    }
   }
 </style>

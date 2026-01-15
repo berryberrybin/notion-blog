@@ -15,7 +15,25 @@ const currentPath = Astro.url.pathname;
 <header class="header">
   <div class="header-content">
     <a href={base} class="logo">
-      <span class="logo-text">Tech Blog</span>
+      <span class="logo-icon" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Bee body -->
+          <ellipse cx="12" cy="13" rx="6" ry="7" fill="currentColor" class="bee-body"/>
+          <!-- Stripes -->
+          <path d="M6.5 11h11M6.5 14h11" stroke="var(--bg-color)" stroke-width="2" stroke-linecap="round"/>
+          <!-- Wings -->
+          <ellipse cx="7" cy="9" rx="3" ry="4" fill="currentColor" opacity="0.3" class="wing wing-left"/>
+          <ellipse cx="17" cy="9" rx="3" ry="4" fill="currentColor" opacity="0.3" class="wing wing-right"/>
+          <!-- Head -->
+          <circle cx="12" cy="5" r="3" fill="currentColor"/>
+          <!-- Antennae -->
+          <path d="M10 3L8 1M14 3L16 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Eyes -->
+          <circle cx="11" cy="5" r="0.8" fill="var(--bg-color)"/>
+          <circle cx="13" cy="5" r="0.8" fill="var(--bg-color)"/>
+        </svg>
+      </span>
+      <span class="logo-text">soobee</span>
     </a>
 
     <nav class="nav">
@@ -29,13 +47,16 @@ const currentPath = Astro.url.pathname;
             href={item.href}
             class:list={["nav-link", { active: isActive }]}
           >
-            {item.label}
+            <span class="nav-text">{item.label}</span>
+            <span class="nav-underline"></span>
           </a>
         );
       })}
     </nav>
 
-    <ThemeToggle />
+    <div class="header-actions">
+      <ThemeToggle />
+    </div>
   </div>
 </header>
 
@@ -44,15 +65,20 @@ const currentPath = Astro.url.pathname;
     position: sticky;
     top: 0;
     z-index: 100;
-    background: var(--bg-color);
+    background: rgba(255, 251, 245, 0.8);
     border-bottom: 1px solid var(--border-color);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  :global([data-theme="dark"]) .header {
+    background: rgba(12, 10, 9, 0.8);
   }
 
   .header-content {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 0.875rem 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -60,43 +86,154 @@ const currentPath = Astro.url.pathname;
   }
 
   .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
     text-decoration: none;
     color: var(--text-color);
+    transition: transform var(--transition-fast);
+  }
+
+  .logo:hover {
+    transform: scale(1.02);
+  }
+
+  .logo:hover .logo-icon {
+    animation: beeWiggle 0.4s ease-in-out;
+  }
+
+  @keyframes beeWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-8deg); }
+    75% { transform: rotate(8deg); }
+  }
+
+  .logo-icon {
+    color: var(--honey);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-icon .wing {
+    transform-origin: center;
+    animation: wingFlap 0.15s ease-in-out infinite alternate;
+  }
+
+  .logo:hover .wing-left {
+    animation: wingFlapLeft 0.1s ease-in-out infinite alternate;
+  }
+
+  .logo:hover .wing-right {
+    animation: wingFlapRight 0.1s ease-in-out infinite alternate;
+  }
+
+  @keyframes wingFlapLeft {
+    from { transform: rotate(-10deg) translateX(1px); }
+    to { transform: rotate(10deg) translateX(-1px); }
+  }
+
+  @keyframes wingFlapRight {
+    from { transform: rotate(10deg) translateX(-1px); }
+    to { transform: rotate(-10deg) translateX(1px); }
   }
 
   .logo-text {
-    font-size: 1.25rem;
+    font-size: 1.375rem;
     font-weight: 700;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .nav {
     display: flex;
-    gap: 1.5rem;
+    gap: 0.5rem;
   }
 
   .nav-link {
+    position: relative;
     color: var(--text-muted);
     text-decoration: none;
     font-size: 0.9rem;
-    transition: color 0.2s;
+    font-weight: 500;
+    padding: 0.5rem 0.875rem;
+    border-radius: 8px;
+    transition: color var(--transition-fast), background var(--transition-fast);
+    overflow: hidden;
   }
 
-  .nav-link:hover,
+  .nav-text {
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-underline {
+    position: absolute;
+    bottom: 6px;
+    left: 0.875rem;
+    right: 0.875rem;
+    height: 2px;
+    background: var(--honey);
+    border-radius: 1px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s var(--spring);
+  }
+
+  .nav-link:hover {
+    color: var(--text-color);
+    background: var(--hover-bg);
+  }
+
+  .nav-link:hover .nav-underline {
+    transform: scaleX(1);
+  }
+
   .nav-link.active {
-    color: var(--accent-color);
+    color: var(--honey);
   }
 
-  @media (max-width: 640px) {
+  .nav-link.active .nav-underline {
+    transform: scaleX(1);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 768px) {
     .header-content {
-      flex-wrap: wrap;
+      padding: 0.75rem 1rem;
     }
 
     .nav {
-      order: 3;
-      width: 100%;
-      justify-content: center;
-      gap: 1rem;
-      padding-top: 0.5rem;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card-bg);
+      border-top: 1px solid var(--border-color);
+      padding: 0.5rem;
+      justify-content: space-around;
+      z-index: 100;
+    }
+
+    .nav-link {
+      flex-direction: column;
+      padding: 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    .nav-underline {
+      display: none;
+    }
+
+    .logo-text {
+      font-size: 1.125rem;
     }
   }
 </style>

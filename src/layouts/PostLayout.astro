@@ -26,18 +26,31 @@ const base = import.meta.env.BASE_URL;
 
 <BaseLayout title={title} description={description}>
   <article class="post">
-    <header class="post-header">
+    <header class="post-header animate-slide-up">
       <div class="post-meta">
         <a href={`${base}categories/${encodeURIComponent(category)}/`} class="category">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
           {category}
         </a>
         {publishedAt && (
           <time datetime={publishedAt} class="date">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
             {formatDate(publishedAt)}
           </time>
         )}
         <span class="updated">
-          Updated: {formatDate(updatedAt)}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+          {formatDate(updatedAt)}
         </span>
       </div>
 
@@ -51,18 +64,22 @@ const base = import.meta.env.BASE_URL;
     </header>
 
     <div class="post-body">
-      <aside class="sidebar">
+      <aside class="sidebar animate-slide-right delay-2">
         <TableOfContents headings={headings} />
       </aside>
 
-      <div class="post-content">
+      <div class="post-content animate-fade delay-1">
         <slot />
       </div>
     </div>
 
-    <footer class="post-footer">
+    <footer class="post-footer animate-slide-up delay-3">
       <a href={`${base}posts/`} class="back-link">
-        &larr; Back to Posts
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Back to Posts
       </a>
     </footer>
   </article>
@@ -72,13 +89,14 @@ const base = import.meta.env.BASE_URL;
   .post {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 1.5rem 4rem;
   }
 
   .post-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
     border-bottom: 1px solid var(--border-color);
+    opacity: 0;
   }
 
   .post-meta {
@@ -86,43 +104,46 @@ const base = import.meta.env.BASE_URL;
     flex-wrap: wrap;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.875rem;
   }
 
   .category {
-    background: var(--accent-bg);
-    color: var(--accent-color);
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    padding: 0.5rem 0.875rem;
+    border-radius: 8px;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    transition: all var(--transition-fast);
   }
 
   .category:hover {
-    background: var(--accent-color);
-    color: white;
+    background: var(--honey);
+    color: #1C1917;
   }
 
-  .date {
+  .date, .updated {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
     color: var(--text-muted);
-  }
-
-  .updated {
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    font-weight: 500;
   }
 
   .post-title {
-    font-size: 2.25rem;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
     font-weight: 700;
-    line-height: 1.3;
-    margin: 0 0 1rem 0;
+    line-height: 1.25;
+    margin: 0 0 1.25rem 0;
     color: var(--text-color);
   }
 
   .post-tags {
-    margin-top: 1rem;
+    margin-top: 1.25rem;
   }
 
   .post-body {
@@ -133,7 +154,7 @@ const base = import.meta.env.BASE_URL;
 
   @media (min-width: 1024px) {
     .post-body {
-      grid-template-columns: 1fr 250px;
+      grid-template-columns: 1fr 280px;
     }
 
     .sidebar {
@@ -141,6 +162,7 @@ const base = import.meta.env.BASE_URL;
       position: sticky;
       top: 5rem;
       height: fit-content;
+      opacity: 0;
     }
 
     .post-content {
@@ -149,140 +171,265 @@ const base = import.meta.env.BASE_URL;
   }
 
   .post-content {
-    line-height: 1.8;
+    line-height: 1.6;
+    font-size: 0.9rem;
+    opacity: 0;
   }
 
+  /* Headings */
   .post-content :global(h1) {
-    font-size: 2rem;
+    font-size: 1.35rem;
     font-weight: 700;
-    margin: 2.5rem 0 1.25rem 0;
-    padding-bottom: 0.5rem;
-    border-bottom: 3px solid var(--accent-color);
+    margin: 1.5rem 0 0.75rem 0;
+    padding-bottom: 0.25rem;
+    border-bottom: 2px solid var(--honey);
     color: var(--text-color);
+    line-height: 1.3;
   }
 
   .post-content :global(h2) {
-    font-size: 1.6rem;
+    font-size: 1.15rem;
     font-weight: 600;
-    margin: 2rem 0 1rem 0;
-    padding-left: 0.75rem;
-    border-left: 4px solid var(--accent-color);
+    margin: 1.25rem 0 0.625rem 0;
+    padding-left: 0.625rem;
+    border-left: 3px solid var(--honey);
     color: var(--text-color);
+    line-height: 1.35;
   }
 
   .post-content :global(h3) {
-    font-size: 1.3rem;
+    font-size: 1rem;
     font-weight: 600;
-    margin: 1.5rem 0 0.75rem 0;
+    margin: 1rem 0 0.5rem 0;
     color: var(--text-color);
     position: relative;
-    padding-left: 1rem;
+    padding-left: 0.875rem;
+    line-height: 1.4;
   }
 
   .post-content :global(h3)::before {
-    content: "•";
+    content: "";
     position: absolute;
     left: 0;
-    color: var(--accent-color);
-    font-weight: bold;
+    top: 0.4em;
+    width: 5px;
+    height: 5px;
+    background: var(--honey);
+    border-radius: 1px;
+    transform: rotate(45deg);
   }
 
   .post-content :global(h4) {
-    font-size: 1.1rem;
+    font-size: 0.925rem;
     font-weight: 600;
-    margin: 1.25rem 0 0.5rem 0;
+    margin: 0.875rem 0 0.375rem 0;
     color: var(--text-muted);
+    line-height: 1.4;
   }
 
+  /* Paragraphs and Lists */
   .post-content :global(p) {
-    margin: 1rem 0;
+    margin: 0.625rem 0;
   }
 
   .post-content :global(ul),
   .post-content :global(ol) {
-    margin: 1rem 0;
-    padding-left: 1.5rem;
+    margin: 0.625rem 0;
+    padding-left: 1.25rem;
   }
 
   .post-content :global(li) {
-    margin: 0.5rem 0;
+    margin: 0.25rem 0;
   }
 
+  .post-content :global(li::marker) {
+    color: var(--honey);
+  }
+
+  /* Code */
   .post-content :global(pre) {
     background: var(--code-bg);
-    padding: 1rem;
+    padding: 0.875rem;
     border-radius: 8px;
     overflow-x: auto;
-    margin: 1.5rem 0;
-    font-size: 0.9rem;
+    margin: 0.875rem 0;
+    font-size: 0.8rem;
+    border: 1px solid var(--border-color);
   }
 
   .post-content :global(code) {
-    font-family: "Fira Code", "Consolas", monospace;
+    font-family: "JetBrains Mono", "Fira Code", monospace;
   }
 
   .post-content :global(:not(pre) > code) {
-    background: var(--code-bg);
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    font-size: 0.9em;
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.875em;
+    font-weight: 500;
   }
 
+  /* Images */
   .post-content :global(img) {
     max-width: 100%;
     height: auto;
     border-radius: 8px;
-    margin: 1.5rem 0;
+    margin: 0.875rem 0;
+    box-shadow: 0 4px 16px var(--shadow-color);
   }
 
+  /* Blockquote / Callout */
   .post-content :global(blockquote) {
-    border-left: 4px solid var(--accent-color);
-    padding-left: 1rem;
-    margin: 1.5rem 0;
-    color: var(--text-muted);
-    font-style: italic;
+    position: relative;
+    padding: 1rem 1rem 1rem 3rem;
+    margin: 1rem 0;
+    background: linear-gradient(135deg, var(--honey-glow) 0%, var(--bg-secondary) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-color);
+    font-style: normal;
+    font-size: 0.85rem;
   }
 
+  .post-content :global(blockquote)::before {
+    content: "💡";
+    position: absolute;
+    left: 0.875rem;
+    top: 0.875rem;
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .post-content :global(blockquote p) {
+    margin: 0;
+  }
+
+  .post-content :global(blockquote p + p) {
+    margin-top: 0.5rem;
+  }
+
+  /* Blockquote with heading inside (Notion section headers) */
+  .post-content :global(blockquote:has(> h1)),
+  .post-content :global(blockquote:has(> h2)),
+  .post-content :global(blockquote:has(> h3)) {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  .post-content :global(blockquote:has(> h1))::before,
+  .post-content :global(blockquote:has(> h2))::before,
+  .post-content :global(blockquote:has(> h3))::before {
+    content: none;
+  }
+
+  /* Heading inside blockquote - style as regular heading */
+  .post-content :global(blockquote > h1) {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 2rem 0 0.75rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--honey);
+    color: var(--text-color);
+    line-height: 1.3;
+  }
+
+  .post-content :global(blockquote > h1:first-child) {
+    margin-top: 1rem;
+  }
+
+  /* Links */
   .post-content :global(a) {
-    color: var(--accent-color);
+    color: var(--honey);
     text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--transition-fast);
   }
 
   .post-content :global(a:hover) {
-    text-decoration: none;
+    color: var(--honey-dark);
   }
 
+  /* Table */
   .post-content :global(table) {
     width: 100%;
     border-collapse: collapse;
-    margin: 1.5rem 0;
+    margin: 0.875rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    font-size: 0.85rem;
   }
 
   .post-content :global(th),
   .post-content :global(td) {
-    border: 1px solid var(--border-color);
-    padding: 0.75rem;
+    padding: 0.5rem 0.75rem;
     text-align: left;
+    border-bottom: 1px solid var(--border-color);
   }
 
   .post-content :global(th) {
-    background: var(--card-bg);
+    background: var(--bg-secondary);
     font-weight: 600;
+    color: var(--text-color);
   }
 
+  .post-content :global(tr:last-child td) {
+    border-bottom: none;
+  }
+
+  .post-content :global(tr:hover td) {
+    background: var(--hover-bg);
+  }
+
+  /* Horizontal Rule */
+  .post-content :global(hr) {
+    border: none;
+    height: 1px;
+    background: var(--border-color);
+    margin: 1.25rem 0;
+  }
+
+  /* Footer */
   .post-footer {
     margin-top: 3rem;
-    padding-top: 1.5rem;
+    padding-top: 2rem;
     border-top: 1px solid var(--border-color);
+    opacity: 0;
   }
 
   .back-link {
-    color: var(--accent-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    transition: all var(--transition-fast);
   }
 
   .back-link:hover {
-    text-decoration: underline;
+    color: var(--honey);
+    background: var(--hover-bg);
+  }
+
+  .back-link svg {
+    transition: transform var(--transition-fast);
+  }
+
+  .back-link:hover svg {
+    transform: translateX(-4px);
+  }
+
+  @media (max-width: 768px) {
+    .post {
+      padding-bottom: 6rem;
+    }
   }
 </style>

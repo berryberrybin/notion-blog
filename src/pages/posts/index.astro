@@ -4,62 +4,550 @@ import PostCard from "../../components/PostCard.astro";
 import { getSortedPosts } from "../../utils/posts";
 
 const posts = await getSortedPosts();
+const base = import.meta.env.BASE_URL;
+
+// Prepare posts data for client-side search/sort
+const postsData = posts.map(post => ({
+  slug: post.data.slug,
+  title: post.data.title,
+  summary: post.data.summary || "",
+  category: post.data.category,
+  tags: post.data.tags,
+  publishedAt: post.data.publishedAt,
+  updatedAt: post.data.updatedAt,
+}));
 ---
 
 <BaseLayout title="Posts" description="All blog posts">
   <div class="posts-page">
-    <header class="page-header">
-      <h1>All Posts</h1>
-      <p class="post-count">{posts.length} posts</p>
+    <header class="page-header animate-slide-up">
+      <div class="header-content">
+        <div class="header-icon">
+          <img
+            src={`${base}images/icons/icon_posts.png`}
+            alt="Posts"
+            class="header-icon-img"
+          />
+        </div>
+        <div class="header-text">
+          <h1 class="animated-title">
+            <span class="title-word">B</span>
+            <span class="title-word">l</span>
+            <span class="title-word">o</span>
+            <span class="title-word">g</span>
+          </h1>
+          <p class="page-desc"><span id="post-count">{posts.length}</span> articles</p>
+        </div>
+      </div>
     </header>
 
+    <!-- Search and Sort Controls -->
+    <div class="controls animate-slide-up delay-1">
+      <div class="search-box">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search posts..."
+          autocomplete="off"
+        />
+        <button id="clear-search" class="clear-btn" aria-label="Clear search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sort-box">
+        <label for="sort-select">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="6" x2="20" y2="6"/>
+            <line x1="4" y1="12" x2="16" y2="12"/>
+            <line x1="4" y1="18" x2="12" y2="18"/>
+          </svg>
+        </label>
+        <select id="sort-select">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="title-asc">Title A-Z</option>
+          <option value="title-desc">Title Z-A</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Posts Grid -->
     {posts.length > 0 ? (
-      <div class="posts-grid">
-        {posts.map((post) => (
-          <PostCard post={post} />
+      <div class="posts-grid" id="posts-grid">
+        {posts.map((post, index) => (
+          <div class="post-item" data-slug={post.data.slug} style={`--index: ${index}`}>
+            <PostCard post={post} />
+          </div>
         ))}
       </div>
     ) : (
-      <div class="empty-state">
-        <p>No posts yet. Check back soon!</p>
+      <div class="empty-state animate-fade">
+        <p>No posts yet.</p>
+        <span class="empty-hint">Check back soon for new content!</span>
       </div>
     )}
+
+    <!-- No Results Message -->
+    <div class="no-results" id="no-results">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <p>No posts found</p>
+      <span>Try different keywords</span>
+    </div>
   </div>
 </BaseLayout>
 
+<script define:vars={{ postsData, base }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('search-input');
+    const clearBtn = document.getElementById('clear-search');
+    const sortSelect = document.getElementById('sort-select');
+    const postsGrid = document.getElementById('posts-grid');
+    const postCount = document.getElementById('post-count');
+    const noResults = document.getElementById('no-results');
+
+    let currentSearch = '';
+    let currentSort = 'newest';
+
+    // Search function
+    function searchPosts(query) {
+      const q = query.toLowerCase().trim();
+      return postsData.filter(post => {
+        if (!q) return true;
+        return (
+          post.title.toLowerCase().includes(q) ||
+          post.summary.toLowerCase().includes(q) ||
+          post.category.toLowerCase().includes(q) ||
+          post.tags.some(tag => tag.toLowerCase().includes(q))
+        );
+      });
+    }
+
+    // Sort function
+    function sortPosts(posts, sortBy) {
+      const sorted = [...posts];
+      switch (sortBy) {
+        case 'newest':
+          sorted.sort((a, b) => new Date(b.publishedAt || b.updatedAt) - new Date(a.publishedAt || a.updatedAt));
+          break;
+        case 'oldest':
+          sorted.sort((a, b) => new Date(a.publishedAt || a.updatedAt) - new Date(b.publishedAt || b.updatedAt));
+          break;
+        case 'title-asc':
+          sorted.sort((a, b) => a.title.localeCompare(b.title, 'ko'));
+          break;
+        case 'title-desc':
+          sorted.sort((a, b) => b.title.localeCompare(a.title, 'ko'));
+          break;
+      }
+      return sorted;
+    }
+
+    // Update display
+    function updateDisplay() {
+      const filtered = searchPosts(currentSearch);
+      const sorted = sortPosts(filtered, currentSort);
+
+      // Update count
+      postCount.textContent = sorted.length;
+
+      // Show/hide posts
+      const allItems = postsGrid.querySelectorAll('.post-item');
+      const visibleSlugs = new Set(sorted.map(p => p.slug));
+
+      allItems.forEach(item => {
+        const slug = item.dataset.slug;
+        if (visibleSlugs.has(slug)) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+
+      // Reorder visible items
+      sorted.forEach((post, index) => {
+        const item = postsGrid.querySelector(`[data-slug="${post.slug}"]`);
+        if (item) {
+          item.style.order = index;
+          item.style.setProperty('--index', index);
+        }
+      });
+
+      // Show no results message
+      if (sorted.length === 0) {
+        noResults.classList.add('visible');
+        postsGrid.style.display = 'none';
+      } else {
+        noResults.classList.remove('visible');
+        postsGrid.style.display = '';
+      }
+
+      // Show/hide clear button
+      if (currentSearch) {
+        clearBtn.classList.add('visible');
+      } else {
+        clearBtn.classList.remove('visible');
+      }
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', (e) => {
+      currentSearch = e.target.value;
+      updateDisplay();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      currentSearch = '';
+      updateDisplay();
+      searchInput.focus();
+    });
+
+    sortSelect.addEventListener('change', (e) => {
+      currentSort = e.target.value;
+      updateDisplay();
+    });
+
+    // Keyboard shortcut: / to focus search
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+      }
+      if (e.key === 'Escape' && document.activeElement === searchInput) {
+        searchInput.blur();
+      }
+    });
+  });
+</script>
+
 <style>
   .posts-page {
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
+    padding: 0 1.5rem 4rem;
   }
 
   .page-header {
     margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
+    padding: 2rem 0;
     border-bottom: 1px solid var(--border-color);
+    opacity: 0;
   }
 
-  .page-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-  }
-
-  .post-count {
-    color: var(--text-muted);
-    margin: 0;
-  }
-
-  .posts-grid {
-    display: grid;
+  .header-content {
+    display: flex;
+    align-items: center;
     gap: 1.5rem;
   }
 
+  .header-icon {
+    flex-shrink: 0;
+  }
+
+  .header-icon-img {
+    width: 90px;
+    height: auto;
+    animation: iconFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.15));
+  }
+
+  @keyframes iconFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(3deg); }
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .animated-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    display: flex;
+    gap: 0.02em;
+  }
+
+  .title-word {
+    display: inline-block;
+    animation: letterBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 0;
+    transform: translateY(30px) scale(0.8);
+    /* 3D Pastel Style */
+    color: #7CB9E8;
+    text-shadow:
+      0 1px 0 #6AA9D8,
+      0 2px 0 #5A99C8,
+      0 3px 0 #4A89B8,
+      0 4px 8px rgba(0, 0, 0, 0.15);
+    -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.3);
+  }
+
+  .title-word:nth-child(1) { color: #7CB9E8; text-shadow: 0 1px 0 #6AA9D8, 0 2px 0 #5A99C8, 0 3px 0 #4A89B8, 0 4px 8px rgba(0,0,0,0.15); }
+  .title-word:nth-child(2) { color: #FFD93D; text-shadow: 0 1px 0 #EFC92D, 0 2px 0 #DFB91D, 0 3px 0 #CFA90D, 0 4px 8px rgba(0,0,0,0.15); }
+  .title-word:nth-child(3) { color: #A8D8B9; text-shadow: 0 1px 0 #98C8A9, 0 2px 0 #88B899, 0 3px 0 #78A889, 0 4px 8px rgba(0,0,0,0.15); }
+  .title-word:nth-child(4) { color: #E8A0BF; text-shadow: 0 1px 0 #D890AF, 0 2px 0 #C8809F, 0 3px 0 #B8708F, 0 4px 8px rgba(0,0,0,0.15); }
+
+  .title-word:nth-child(1) { animation-delay: 0.1s; }
+  .title-word:nth-child(2) { animation-delay: 0.15s; }
+  .title-word:nth-child(3) { animation-delay: 0.2s; }
+  .title-word:nth-child(4) { animation-delay: 0.25s; }
+
+  @keyframes letterBounce {
+    0% {
+      opacity: 0;
+      transform: translateY(30px) scale(0.8);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(-8px) scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .page-desc {
+    color: var(--text-muted);
+    margin: 0.5rem 0 0 0;
+    font-size: 1rem;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    opacity: 0;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 200px;
+    max-width: 400px;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 2.75rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    transition: all 0.2s ease;
+  }
+
+  .search-box input::placeholder {
+    color: var(--text-light);
+  }
+
+  .search-box input:focus {
+    outline: none;
+    border-color: var(--honey);
+    box-shadow: 0 0 0 3px var(--honey-glow);
+  }
+
+  .clear-btn {
+    position: absolute;
+    right: 0.75rem;
+    padding: 0.25rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+  }
+
+  .clear-btn.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .clear-btn:hover {
+    color: var(--text-color);
+    background: var(--hover-bg);
+  }
+
+  .sort-box {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sort-box label {
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+  }
+
+  .sort-box select {
+    padding: 0.75rem 2rem 0.75rem 1rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    transition: all 0.2s ease;
+  }
+
+  .sort-box select:focus {
+    outline: none;
+    border-color: var(--honey);
+  }
+
+  .sort-box select:hover {
+    border-color: var(--text-muted);
+  }
+
+  /* Posts Grid */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .post-item {
+    animation: fadeSlideUp 0.4s ease forwards;
+    animation-delay: calc(var(--index) * 0.03s);
+    opacity: 0;
+  }
+
+  @keyframes fadeSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* No Results */
+  .no-results {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+    text-align: center;
+    border: 1px dashed var(--border-color);
+    border-radius: 12px;
+  }
+
+  .no-results.visible {
+    display: flex;
+  }
+
+  .no-results svg {
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  .no-results p {
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .no-results span {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+  }
+
+  /* Empty state */
   .empty-state {
     text-align: center;
-    padding: 3rem;
+    padding: 5rem 2rem;
     color: var(--text-muted);
     border: 1px dashed var(--border-color);
-    border-radius: 8px;
+    border-radius: 12px;
+  }
+
+  .empty-state p {
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .empty-hint {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-light);
+  }
+
+  @media (max-width: 768px) {
+    .posts-page {
+      padding-bottom: 6rem;
+    }
+
+    .controls {
+      flex-direction: column;
+    }
+
+    .search-box {
+      max-width: none;
+    }
+
+    .sort-box {
+      width: 100%;
+    }
+
+    .sort-box select {
+      flex: 1;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .animated-title {
+      font-size: 2.25rem;
+    }
+
+    .header-icon-img {
+      width: 70px;
+    }
+
+    .header-content {
+      gap: 1rem;
+    }
   }
 </style>

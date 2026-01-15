@@ -4,27 +4,54 @@ import { getCategories } from "../../utils/posts";
 
 const base = import.meta.env.BASE_URL;
 const categories = await getCategories();
+
+const titleLetters = "Categories".split("");
 ---
 
 <BaseLayout title="Categories" description="Browse posts by category">
   <div class="categories-page">
-    <header class="page-header">
-      <h1>Categories</h1>
-      <p class="category-count">{categories.length} categories</p>
+    <header class="page-header animate-slide-up">
+      <div class="header-content">
+        <div class="header-icon">
+          <img
+            src={`${base}images/icons/icon_categories.png`}
+            alt="Categories"
+            class="header-icon-img"
+          />
+        </div>
+        <div class="header-text">
+          <h1 class="animated-title">
+            {titleLetters.map((letter, i) => (
+              <span class="title-word" style={`--i: ${i}`}>{letter}</span>
+            ))}
+          </h1>
+          <p class="page-desc">{categories.length} categories</p>
+        </div>
+      </div>
     </header>
 
     {categories.length > 0 ? (
       <div class="categories-grid">
-        {categories.map((category) => (
-          <a href={`${base}categories/${encodeURIComponent(category.name)}/`} class="category-card">
-            <h2 class="category-name">{category.name}</h2>
-            <p class="category-posts">{category.count} posts</p>
+        {categories.map((category, index) => (
+          <a
+            href={`${base}categories/${encodeURIComponent(category.name)}/`}
+            class="category-card"
+            style={`--index: ${index}`}
+          >
+            <div class="card-content">
+              <h2 class="category-name">{category.name}</h2>
+              <span class="category-count">{category.count} {category.count === 1 ? 'article' : 'articles'}</span>
+            </div>
+            <svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
           </a>
         ))}
       </div>
     ) : (
-      <div class="empty-state">
-        <p>No categories yet. Check back soon!</p>
+      <div class="empty-state animate-fade">
+        <p>No categories yet.</p>
       </div>
     )}
   </div>
@@ -32,66 +59,189 @@ const categories = await getCategories();
 
 <style>
   .categories-page {
-    max-width: 900px;
+    max-width: 800px;
     margin: 0 auto;
+    padding: 0 1.5rem 4rem;
   }
 
   .page-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
     border-bottom: 1px solid var(--border-color);
+    opacity: 0;
   }
 
-  .page-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-  }
-
-  .category-count {
-    color: var(--text-muted);
-    margin: 0;
-  }
-
-  .categories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  .header-content {
+    display: flex;
+    align-items: center;
     gap: 1.5rem;
   }
 
+  .header-icon {
+    flex-shrink: 0;
+  }
+
+  .header-icon-img {
+    width: 100px;
+    height: auto;
+    animation: iconFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.15));
+  }
+
+  @keyframes iconFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(-3deg); }
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .animated-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    display: flex;
+    gap: 0.02em;
+  }
+
+  .title-word {
+    display: inline-block;
+    animation: letterBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 0;
+    transform: translateY(30px) scale(0.8);
+    /* 3D Pastel Style */
+    color: #7CB9E8;
+    text-shadow:
+      0 1px 0 #6AA9D8,
+      0 2px 0 #5A99C8,
+      0 3px 0 #4A89B8,
+      0 4px 8px rgba(0, 0, 0, 0.15);
+    -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.3);
+  }
+
+  /* Categories: 10 letters cycling through Blue, Yellow, Green, Pink */
+  .title-word:nth-child(1) { color: #7CB9E8; text-shadow: 0 1px 0 #6AA9D8, 0 2px 0 #5A99C8, 0 3px 0 #4A89B8, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.1s; }
+  .title-word:nth-child(2) { color: #FFD93D; text-shadow: 0 1px 0 #EFC92D, 0 2px 0 #DFB91D, 0 3px 0 #CFA90D, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.14s; }
+  .title-word:nth-child(3) { color: #A8D8B9; text-shadow: 0 1px 0 #98C8A9, 0 2px 0 #88B899, 0 3px 0 #78A889, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.18s; }
+  .title-word:nth-child(4) { color: #E8A0BF; text-shadow: 0 1px 0 #D890AF, 0 2px 0 #C8809F, 0 3px 0 #B8708F, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.22s; }
+  .title-word:nth-child(5) { color: #7CB9E8; text-shadow: 0 1px 0 #6AA9D8, 0 2px 0 #5A99C8, 0 3px 0 #4A89B8, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.26s; }
+  .title-word:nth-child(6) { color: #FFD93D; text-shadow: 0 1px 0 #EFC92D, 0 2px 0 #DFB91D, 0 3px 0 #CFA90D, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.3s; }
+  .title-word:nth-child(7) { color: #A8D8B9; text-shadow: 0 1px 0 #98C8A9, 0 2px 0 #88B899, 0 3px 0 #78A889, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.34s; }
+  .title-word:nth-child(8) { color: #E8A0BF; text-shadow: 0 1px 0 #D890AF, 0 2px 0 #C8809F, 0 3px 0 #B8708F, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.38s; }
+  .title-word:nth-child(9) { color: #7CB9E8; text-shadow: 0 1px 0 #6AA9D8, 0 2px 0 #5A99C8, 0 3px 0 #4A89B8, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.42s; }
+  .title-word:nth-child(10) { color: #FFD93D; text-shadow: 0 1px 0 #EFC92D, 0 2px 0 #DFB91D, 0 3px 0 #CFA90D, 0 4px 8px rgba(0,0,0,0.15); animation-delay: 0.46s; }
+
+  @keyframes letterBounce {
+    0% {
+      opacity: 0;
+      transform: translateY(30px) scale(0.8);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(-8px) scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .page-desc {
+    color: var(--text-muted);
+    margin: 0.5rem 0 0 0;
+    font-size: 1rem;
+  }
+
+  .categories-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
   .category-card {
-    display: block;
-    padding: 1.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    background: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border-color);
     text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.15s ease;
+    animation: fadeIn 0.3s ease forwards;
+    animation-delay: calc(var(--index) * 0.03s);
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+
+  .category-card:first-child {
+    border-top: 1px solid var(--border-color);
   }
 
   .category-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px var(--shadow-color);
+    padding-left: 0.75rem;
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
   .category-name {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 600;
     color: var(--text-color);
-    margin: 0 0 0.5rem 0;
+    margin: 0;
+    transition: color 0.15s ease;
   }
 
-  .category-posts {
+  .category-card:hover .category-name {
+    color: var(--honey);
+  }
+
+  .category-count {
+    font-size: 0.875rem;
     color: var(--text-muted);
-    font-size: 0.9rem;
-    margin: 0;
+  }
+
+  .arrow {
+    color: var(--text-light);
+    transition: all 0.15s ease;
+  }
+
+  .category-card:hover .arrow {
+    color: var(--text-color);
+    transform: translateX(4px);
   }
 
   .empty-state {
     text-align: center;
-    padding: 3rem;
+    padding: 4rem 2rem;
     color: var(--text-muted);
-    border: 1px dashed var(--border-color);
-    border-radius: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .categories-page {
+      padding-bottom: 6rem;
+    }
+
+    .animated-title {
+      font-size: 2.25rem;
+    }
+
+    .header-icon-img {
+      width: 75px;
+    }
+
+    .header-content {
+      gap: 1rem;
+    }
   }
 </style>

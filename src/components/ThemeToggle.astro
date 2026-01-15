@@ -1,26 +1,23 @@
 ---
 ---
 
-<button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
-  <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="5"></circle>
-    <line x1="12" y1="1" x2="12" y2="3"></line>
-    <line x1="12" y1="21" x2="12" y2="23"></line>
-    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-    <line x1="1" y1="12" x2="3" y2="12"></line>
-    <line x1="21" y1="12" x2="23" y2="12"></line>
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-  </svg>
-  <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-  </svg>
-</button>
+<div class="theme-controls">
+  <!-- Dark Mode Toggle -->
+  <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark mode">
+    <span class="btn-text light-text">Light</span>
+    <span class="btn-text dark-text">Dark</span>
+  </button>
+
+  <!-- Simple Mode Toggle -->
+  <button id="simple-toggle" class="theme-btn simple-btn" aria-label="Toggle simple mode">
+    <span class="btn-text">Simple</span>
+  </button>
+</div>
 
 <script>
   function initTheme() {
-    const toggle = document.getElementById("theme-toggle");
+    const themeToggle = document.getElementById("theme-toggle");
+    const simpleToggle = document.getElementById("simple-toggle");
 
     const getTheme = () => {
       const stored = localStorage.getItem("theme");
@@ -31,15 +28,62 @@
     const setTheme = (theme: string) => {
       document.documentElement.setAttribute("data-theme", theme);
       localStorage.setItem("theme", theme);
+      updateToggles(theme);
+    };
+
+    const updateToggles = (theme: string) => {
+      const isDark = theme === "dark" || theme === "simple-dark";
+      const isSimple = theme === "simple" || theme === "simple-dark";
+
+      themeToggle?.classList.toggle("is-dark", isDark);
+      simpleToggle?.classList.toggle("active", isSimple);
     };
 
     // Initialize theme
-    setTheme(getTheme());
+    const currentTheme = getTheme();
+    setTheme(currentTheme);
 
-    // Handle toggle click
-    toggle?.addEventListener("click", () => {
+    // Handle light/dark toggle click
+    themeToggle?.addEventListener("click", () => {
       const current = document.documentElement.getAttribute("data-theme");
-      const next = current === "dark" ? "light" : "dark";
+      let next: string;
+
+      if (current === "light") {
+        next = "dark";
+      } else if (current === "dark") {
+        next = "light";
+      } else if (current === "simple") {
+        next = "simple-dark";
+      } else if (current === "simple-dark") {
+        next = "simple";
+      } else {
+        next = "dark";
+      }
+
+      themeToggle.classList.add("clicked");
+      setTimeout(() => themeToggle.classList.remove("clicked"), 200);
+      setTheme(next);
+    });
+
+    // Handle simple mode toggle click
+    simpleToggle?.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme");
+      let next: string;
+
+      if (current === "light") {
+        next = "simple";
+      } else if (current === "dark") {
+        next = "simple-dark";
+      } else if (current === "simple") {
+        next = "light";
+      } else if (current === "simple-dark") {
+        next = "dark";
+      } else {
+        next = "simple";
+      }
+
+      simpleToggle.classList.add("clicked");
+      setTimeout(() => simpleToggle.classList.remove("clicked"), 200);
       setTheme(next);
     });
   }
@@ -52,33 +96,68 @@
 </script>
 
 <style>
-  .theme-toggle {
-    background: none;
-    border: none;
+  .theme-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .theme-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border-color);
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    height: 32px;
+    color: var(--text-muted);
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .theme-btn:hover {
+    border-color: var(--text-muted);
     color: var(--text-color);
-    border-radius: 8px;
-    transition: background 0.2s;
   }
 
-  .theme-toggle:hover {
-    background: var(--hover-bg);
+  .theme-btn:active,
+  .theme-btn.clicked {
+    transform: scale(0.95);
   }
 
-  :global([data-theme="dark"]) .sun-icon {
+  .btn-text {
+    transition: opacity 0.15s ease;
+  }
+
+  /* Light/Dark toggle text visibility */
+  .light-text {
+    display: inline;
+  }
+
+  .dark-text {
     display: none;
   }
 
-  :global([data-theme="light"]) .moon-icon {
+  .theme-btn.is-dark .light-text {
     display: none;
   }
 
-  :global([data-theme="dark"]) .moon-icon {
-    display: block;
+  .theme-btn.is-dark .dark-text {
+    display: inline;
   }
 
-  :global([data-theme="light"]) .sun-icon {
-    display: block;
+  /* Simple Toggle - active state */
+  .simple-btn.active {
+    background: var(--text-color);
+    border-color: var(--text-color);
+    color: var(--bg-color);
+  }
+
+  .simple-btn.active:hover {
+    opacity: 0.9;
   }
 </style>
