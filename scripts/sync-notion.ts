@@ -21,6 +21,114 @@ if (!process.env.NOTION_DATABASE_ID) {
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
+// Custom code block transformer - fix incorrect newline insertion between rich_text elements
+n2m.setCustomTransformer("code", async (block: any) => {
+  const { code } = block;
+  const language = code?.language || "plaintext";
+
+  // Join rich_text elements WITHOUT newlines (the bug in notion-to-md uses "\n")
+  const codeContent = code?.rich_text?.map((t: any) => t.plain_text).join("") || "";
+
+  return `\`\`\`${language}\n${codeContent}\n\`\`\``;
+});
+
+// Custom table transformer - converts Notion tables to HTML for proper newline support
+n2m.setCustomTransformer("table", async (block: any) => {
+  const { id, table } = block;
+  const hasColumnHeader = table?.has_column_header ?? false;
+  const hasRowHeader = table?.has_row_header ?? false;
+
+  // Fetch table rows
+  const response = await notion.blocks.children.list({ block_id: id });
+  const rows = response.results as any[];
+
+  if (rows.length === 0) return "";
+
+  // Helper function to convert rich_text to HTML
+  const richTextToHtml = (richTextArray: any[]): string => {
+    if (!richTextArray || richTextArray.length === 0) return "";
+
+    return richTextArray
+      .map((item) => {
+        let text = item.plain_text || "";
+
+        // Convert newlines to <br> tags
+        text = text.replace(/\n/g, "<br>");
+
+        // Escape HTML entities (except our <br> tags)
+        text = text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/&lt;br&gt;/g, "<br>");
+
+        const annotations = item.annotations || {};
+
+        // Apply annotations
+        if (annotations.code) {
+          text = `<code>${text}</code>`;
+        }
+        if (annotations.bold) {
+          text = `<strong>${text}</strong>`;
+        }
+        if (annotations.italic) {
+          text = `<em>${text}</em>`;
+        }
+        if (annotations.strikethrough) {
+          text = `<del>${text}</del>`;
+        }
+        if (annotations.underline) {
+          text = `<u>${text}</u>`;
+        }
+
+        // Handle links
+        if (item.href) {
+          text = `<a href="${item.href}">${text}</a>`;
+        }
+
+        return text;
+      })
+      .join("");
+  };
+
+  // Build HTML table
+  let html = "<table>\n";
+
+  rows.forEach((row, rowIndex) => {
+    if (row.type !== "table_row") return;
+
+    const cells = row.table_row?.cells || [];
+    const isHeaderRow = hasColumnHeader && rowIndex === 0;
+
+    if (isHeaderRow) {
+      html += "  <thead>\n    <tr>\n";
+    } else if (rowIndex === 0 || (hasColumnHeader && rowIndex === 1)) {
+      html += "  <tbody>\n";
+    }
+
+    if (!isHeaderRow) {
+      html += "    <tr>\n";
+    }
+
+    cells.forEach((cell: any[], cellIndex: number) => {
+      const cellContent = richTextToHtml(cell);
+      const isRowHeaderCell = hasRowHeader && cellIndex === 0;
+      const tag = isHeaderRow || isRowHeaderCell ? "th" : "td";
+      html += `      <${tag}>${cellContent}</${tag}>\n`;
+    });
+
+    if (isHeaderRow) {
+      html += "    </tr>\n  </thead>\n";
+    } else {
+      html += "    </tr>\n";
+    }
+  });
+
+  html += "  </tbody>\n</table>\n";
+
+  return html;
+});
+
 // Type definitions
 interface PostProperties {
   title: string;
